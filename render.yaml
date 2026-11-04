@@ -1,4 +1,5 @@
 # Render Blueprint for a free, demo-only deployment (no AI provider is ever called).
+# Do NOT add LLM_API_KEY / OPENROUTER_API_KEY in the Render dashboard. See docs/deployment.md.
 services:
   - type: web
     name: ai-code-review-assistant
