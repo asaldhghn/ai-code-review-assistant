@@ -71,7 +71,7 @@ More detail is in [docs/learning/02-architecture.md](docs/learning/02-architectu
 
 ## Getting started
 
-Requirements: Python 3.12+, Node.js 20+ (22 recommended).
+Requirements: Python 3.12+, Node.js 22.12+ (the test runner, Vitest 5, requires it).
 
 ### 1. Backend
 
@@ -150,7 +150,7 @@ npx playwright install chromium  # once
 npm run e2e                      # needs `npm run build` first; starts the backend itself
 ```
 
-No test calls a paid AI API: the AI client is replaced with a scripted fake, and one suite drives the real OpenAI SDK against a mocked HTTP transport. Last local run: 157 backend tests, 25 frontend tests and 11 Playwright tests (including axe-core accessibility scans) passing; ruff, ESLint and the TypeScript check clean. CI runs the same checks (see [.github/workflows/ci.yml](.github/workflows/ci.yml)).
+No test calls a paid AI API: the AI client is replaced with a scripted fake, and one suite drives the real OpenAI SDK against a mocked HTTP transport. Last local run: 161 backend tests, 25 frontend tests and 16 Playwright tests passing (the Playwright suite includes axe-core accessibility scans and no-horizontal-scroll checks at five phone and tablet widths; it was also run against the locally built Docker container); ruff, ESLint and the TypeScript check clean. CI runs the same checks (see [.github/workflows/ci.yml](.github/workflows/ci.yml)).
 
 Regenerate the screenshots from the running app with `npm run screenshots` (in `frontend/`).
 
@@ -167,7 +167,7 @@ Regenerate the screenshots from the running app with `npm run screenshots` (in `
 
 ## Deployment
 
-The [Dockerfile](Dockerfile) builds the UI and serves everything from one container with live AI **disabled**, and [render.yaml](render.yaml) describes a free Render web service. I have not deployed it yet, so there is no live URL in this README. Steps: push to GitHub, create a Render account, choose *New > Blueprint*, select the repository, and verify `/api/health`. I could not build the Docker image on my machine (no Docker installed), so treat the image as unverified until the first deploy.
+The [Dockerfile](Dockerfile) builds the UI and serves everything from one container with live AI **disabled**, and [render.yaml](render.yaml) describes a free Render web service. I built the image locally and ran the browser tests against the running container (demo workflow, accessibility and mobile-layout checks); a live request to it returns HTTP 403 even when a key is supplied. It is **not deployed yet**, so there is no live URL in this README. Step-by-step Render setup and the reasons it cannot trigger paid AI calls are in [docs/deployment.md](docs/deployment.md).
 
 ## Known limitations
 
@@ -176,7 +176,8 @@ The [Dockerfile](Dockerfile) builds the UI and serves everything from one contai
 - Demo mode only knows a short list of regex and Python-`ast` rules.
 - No accounts, history or persistence. Results exist only in the browser until exported.
 - The rate limiter is in memory and per process; behind a proxy it sees the proxy's address unless configured otherwise.
-- Default model ids may need changing for your provider.
+- Default model ids may need changing for your provider, and live AI has not been run against a real provider in this repository.
+- The free Render tier sleeps when idle, so the first request after a pause can take about a minute.
 
 ## What changed from the original assignment
 

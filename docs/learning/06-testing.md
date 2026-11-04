@@ -4,7 +4,7 @@ Tests are programs that check other programs. There are three layers here, from 
 
 ## Layer 1: backend tests (pytest)
 
-Run from `backend/`: `pytest -q` (157 tests, about 4 seconds).
+Run from `backend/`: `pytest -q` (161 tests, about 4 seconds).
 
 | File | What it verifies |
 | --- | --- |
@@ -17,6 +17,7 @@ Run from `backend/`: `pytest -q` (157 tests, about 4 seconds).
 | `test_api.py` | Every endpoint through HTTP: validation errors, 413 limits, key never echoed, rate limit, generic 500, report escaping, SPA path traversal |
 | `test_cli.py` | CLI flows: demo reports, clear error messages, mocked live review, a real temporary git repo for staged-diff mode |
 | `test_sdk_http.py` | The **real** OpenAI SDK against a mocked HTTP transport: exact URL, auth header and strict JSON schema on the wire, real 401/429/connection errors mapped to ours |
+| `test_deployment_safety.py` | A demo-only server never creates an AI client (even with a server key and a request key); the Dockerfile and render.yaml force live reviews off and declare no keys |
 | `test_redact_and_ratelimit.py` | Secret masking and the limiter |
 
 ### The fake AI client
@@ -59,7 +60,7 @@ Queries use accessible roles and names (`getByRole("button", {name: /run review/
 
 ## Layer 3: end-to-end tests (Playwright)
 
-Run from `frontend/` after `npm run build`: `npm run e2e` (11 tests). Playwright starts the real FastAPI server, opens real Chromium, and drives the app: load a sample, run a demo review, filter to critical, open a SQL injection finding, export JSON and check the downloaded file, plus the empty state, the missing-key message, an injected server error, the About page and the keyboard shortcut. No AI provider is involved. `accessibility.spec.ts` adds axe-core scans (WCAG 2 A/AA rules) of the workspace, live-mode settings, results and About screens, plus a keyboard-only check. Those scans found three real problems during development (low contrast on line numbers, and two accessible names that did not contain their visible text), which were fixed.
+Run from `frontend/` after `npm run build`: `npm run e2e` (16 tests). Playwright starts the real FastAPI server, opens real Chromium, and drives the app: load a sample, run a demo review, filter to critical, open a SQL injection finding, export JSON and check the downloaded file, plus the empty state, the missing-key message, an injected server error, the About page and the keyboard shortcut. No AI provider is involved. `accessibility.spec.ts` adds axe-core scans (WCAG 2 A/AA rules) of the workspace, live-mode settings, results and About screens, plus a keyboard-only check. `responsive.spec.ts` loads the app at five phone and tablet widths (360 to 768 px) and checks that nothing scrolls sideways and the main actions work by touch. The same suite can be pointed at a running container with `E2E_BASE_URL`. The accessibility scans found three real problems during development (low contrast on line numbers, and two accessible names that did not contain their visible text), which were fixed.
 
 ## Static checks
 
@@ -69,7 +70,7 @@ Run from `frontend/` after `npm run build`: `npm run e2e` (11 tests). Playwright
 
 - Real AI model quality (the AI client is always faked).
 - Visual appearance beyond what I checked in screenshots; axe cannot judge usability, reading order or screen-reader experience.
-- Docker image build and any hosted deployment.
+- Any hosted deployment (the Docker image was built and exercised locally).
 - No coverage percentage is claimed; I did not measure one.
 
 ## Commands cheat sheet

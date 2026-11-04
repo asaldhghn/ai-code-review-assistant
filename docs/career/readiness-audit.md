@@ -16,17 +16,18 @@ Written from the point of view of a technical interviewer reading this repositor
 | Documentation | Strong | Judgment; every README command was run, except Docker |
 | GitHub presentation | Incomplete | Private; no license; no live URL |
 | Interview readiness | Depends on you | See [co-op-readiness-checklist.md](co-op-readiness-checklist.md) |
+| Deployment safety | Verified locally | Docker container tested; live AI cannot be triggered ([../deployment.md](../deployment.md)) |
 
 ## Weaknesses (honest list)
 
-1. **Not deployed.** There is no live URL. A recruiter cannot try it in 10 seconds. The Dockerfile and `render.yaml` exist but the image has **not been built** (no Docker on the development machine).
+1. **Not deployed.** There is no live URL, so a recruiter cannot try it in 10 seconds. The Docker image was built and tested locally, and the Render setup is documented in [../deployment.md](../deployment.md), but nothing is running on Render yet.
 2. **Live AI never exercised with a real key.** Verified with a fake client and with the real OpenAI SDK against a mocked HTTP transport, but not against OpenRouter. Default model ids come from the course assignment and may be wrong for your provider.
 3. **AI finding quality is unmeasured.** No labeled benchmark. Claims about "finding problems" apply to the demo rules (tested) and not to model accuracy.
 4. **Demo scanner is shallow.** About 20 rules; the "magic number" rule can be noisy and none of it understands data flow. It is labeled as such.
 5. **Rate limiter** is in-memory, per process, and keys on the connecting address (a proxy would hide real clients). Acceptable for the demo-only deployment where live AI is off.
-6. **No license** and the repo is private, so it is not yet usable as a portfolio link.
+6. **No license** and the repo is private, so it is not yet usable as a portfolio link. Dependencies are MIT-compatible, but whether Seneca/AIP444 allows publishing the coursework-derived code is unconfirmed; see [../licensing-review.md](../licensing-review.md).
 7. **Thin commit history** (a handful of large commits because the project was assembled in one session). It is honest, and should not be padded. Earlier commits carry a `Co-Authored-By: Claude` trailer; history was not rewritten, and later commits omit it as you requested.
-8. **Frontend untested at real mobile widths in e2e** (only layout screenshots were checked manually) and no light theme.
+8. **Mobile coverage is layout-level only.** Automated checks cover five viewport sizes in desktop Chromium with touch (no horizontal scroll, main flow works), but not real devices, Safari or Firefox. No light theme.
 9. **Bleeding-edge dependency majors** (TypeScript 6, Vite 8, ESLint 10, Vitest 5). They work and CI passes, but a reviewer may be unfamiliar with them.
 10. **The original "Judge" model stage was removed** from the assignment design; a reviewer who knows the assignment may ask why.
 
@@ -40,22 +41,32 @@ Written from the point of view of a technical interviewer reading this repositor
 
 | Check | Result |
 | --- | --- |
-| `pytest -q` (backend) | 157 passed |
+| `pytest -q` (backend) | 161 passed |
 | `ruff check` and `ruff format --check` | clean |
 | `npm run lint`, `npm run typecheck` | clean |
 | `npm test` (Vitest) | 25 passed |
 | `npm run build` | succeeds |
-| `npm run e2e` (Playwright, 11 tests incl. axe) | 11 passed |
+| `npm run e2e` (Playwright: smoke, axe accessibility, 5 viewport sizes) | 16 passed (1 screenshot script skipped by design) |
+| Same Playwright suite against the running Docker container | 14 passed; the 2 tests that need live mode are skipped because the container correctly disables it |
+| `docker build` and `docker run` (non-root user, `PORT` honored) | works; `/api/health` OK; live request with a header key returned HTTP 403 |
+| gitleaks over all 8 commits | 12 hits, all fake test-fixture keys (`sk-live-abcdef123456` etc.); allowlisted in `.gitleaks.toml`; a realistic key is still detected (negative control) |
+| Regex search of all history for key shapes, private keys, `.env`/`.pem` files | only fake fixtures; only `.env.example` committed |
 | `pip-audit -r requirements.txt` | no known vulnerabilities |
 | `npm audit --omit=dev` | 0 vulnerabilities |
 | `npm audit` (all) | 1 moderate advisory in `minimatch`, pulled in by ESLint tooling; dev-only, not in the shipped bundle |
 | Search for committed secrets | only obvious fake test fixtures |
 | GitHub Actions | see the Actions tab; the run for each pushed commit is checked after pushing |
 
+## Fixed in the final-prep pass
+
+- README, About page and learning guide said Node.js 20+, but the test runner needs 22.12+. Corrected, and declared in `package.json`.
+- Added tests that prove a demo-only deployment cannot create an AI client, and that deployment files force live reviews off.
+- Added `THIRD_PARTY_NOTICES.md` (the bundled fonts are OFL-licensed and need a notice).
+
 ## Best next steps for a co-op application
 
 1. Run one real live review with your own key and fix the model ids if needed.
-2. Deploy the demo-only image and verify the URL yourself.
-3. Choose a license, scan history for secrets, then make the repo public.
+2. Connect Render using [../deployment.md](../deployment.md) and verify the URL yourself.
+3. Confirm the coursework-publishing question, choose a license, then make the repo public (history has already been scanned).
 4. Complete the hands-on checklist and rehearse the demo script.
 5. Optional: a small labeled set of vulnerable and clean files to measure the AI reviewers' precision.
