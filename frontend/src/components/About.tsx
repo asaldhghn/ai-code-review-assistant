@@ -101,7 +101,7 @@ export function About() {
       </Card>
 
       <Card icon={<TerminalSquare aria-hidden="true" className="size-5" />} title="Run it locally">
-        <p>Requires Python 3.12+ and Node.js 20+.</p>
+        <p>Requires Python 3.12+ and Node.js 22.12+.</p>
         <Code label="Backend setup commands">{`cd backend
 python -m venv .venv
 .venv\\Scripts\\activate          # macOS/Linux: source .venv/bin/activate

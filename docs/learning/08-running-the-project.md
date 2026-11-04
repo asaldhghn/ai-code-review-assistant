@@ -1,6 +1,6 @@
 # 08 · Running the project
 
-Requirements: **Python 3.12+**, **Node.js 20+**, **Git**. Optional: [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) for the CLI's AI search tool; Docker for the container.
+Requirements: **Python 3.12+**, **Node.js 22.12+**, **Git**. Optional: [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) for the CLI's AI search tool; Docker for the container.
 
 ## 1. Get the code
 
@@ -90,7 +90,7 @@ cd frontend && npx playwright install chromium && npm run e2e
 
 On Windows, if Playwright cannot find Python, set `E2E_PYTHON` to your venv's `python.exe` path first.
 
-## 9. Docker (demo-only image)
+## 9. Docker (demo-only image, built and tested locally)
 
 ```bash
 docker build -t code-review-demo .
