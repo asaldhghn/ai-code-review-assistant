@@ -1,0 +1,10 @@
+# Render Blueprint for a free, demo-only deployment (no AI provider is ever called).
+services:
+  - type: web
+    name: ai-code-review-assistant
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: ENABLE_LIVE_REVIEW
+        value: "false"
