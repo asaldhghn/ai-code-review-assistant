@@ -1,0 +1,17 @@
+# Extends the default gitleaks rules. Only the exact fake keys used as test fixtures are allowed;
+# any other secret-shaped string is still reported.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake API keys used in tests and samples"
+regexes = [
+  '''sk-live-abcdef123456''',
+  '''sk-abcdefgh12345''',
+  '''sk-provider-zzzz99999999''',
+  '''sk-user-key-abcdef123456''',
+  '''sk-server-key-abcdef123456''',
+  '''sk-server-abcdef123456''',
+  '''sk-or-v1-abcdef123456''',
+  '''sk-demo-1234567890-not-a-real-key''',
+]
