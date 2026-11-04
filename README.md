@@ -30,7 +30,7 @@ The AI reviewers started as my AIP444 coursework (a tool-calling CLI reviewer). 
 - Export a self-contained **HTML** or **JSON** report.
 - CLI: review a file or your staged git changes, in demo or live mode, with HTML or JSON output.
 - Typed error handling for empty input, oversized input, missing or invalid API keys, rate limits, network failures, malformed model output and server errors. Messages never contain secrets.
-- Accessible, responsive UI: keyboard operable, visible focus, semantic HTML, reduced-motion support.
+- Accessible, responsive UI: keyboard operable, visible focus, semantic HTML, reduced-motion support, and automated axe-core WCAG A/AA scans of every screen (not a substitute for a manual screen-reader audit).
 
 ## Technology
 
@@ -150,7 +150,7 @@ npx playwright install chromium  # once
 npm run e2e                      # needs `npm run build` first; starts the backend itself
 ```
 
-No test calls a paid AI API: the AI client is replaced with a scripted fake. Last local run: 154 backend tests, 25 frontend tests and 6 Playwright tests passing; ruff, ESLint and the TypeScript check clean. CI runs the same checks (see [.github/workflows/ci.yml](.github/workflows/ci.yml)).
+No test calls a paid AI API: the AI client is replaced with a scripted fake, and one suite drives the real OpenAI SDK against a mocked HTTP transport. Last local run: 157 backend tests, 25 frontend tests and 11 Playwright tests (including axe-core accessibility scans) passing; ruff, ESLint and the TypeScript check clean. CI runs the same checks (see [.github/workflows/ci.yml](.github/workflows/ci.yml)).
 
 Regenerate the screenshots from the running app with `npm run screenshots` (in `frontend/`).
 

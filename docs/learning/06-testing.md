@@ -4,7 +4,7 @@ Tests are programs that check other programs. There are three layers here, from 
 
 ## Layer 1: backend tests (pytest)
 
-Run from `backend/`: `pytest -q` (154 tests, about 3 seconds).
+Run from `backend/`: `pytest -q` (157 tests, about 4 seconds).
 
 | File | What it verifies |
 | --- | --- |
@@ -16,6 +16,7 @@ Run from `backend/`: `pytest -q` (154 tests, about 3 seconds).
 | `test_service.py` | Input validation, demo labeling, live disabled, missing key, partial results, error priority, timeout |
 | `test_api.py` | Every endpoint through HTTP: validation errors, 413 limits, key never echoed, rate limit, generic 500, report escaping, SPA path traversal |
 | `test_cli.py` | CLI flows: demo reports, clear error messages, mocked live review, a real temporary git repo for staged-diff mode |
+| `test_sdk_http.py` | The **real** OpenAI SDK against a mocked HTTP transport: exact URL, auth header and strict JSON schema on the wire, real 401/429/connection errors mapped to ours |
 | `test_redact_and_ratelimit.py` | Secret masking and the limiter |
 
 ### The fake AI client
@@ -58,7 +59,7 @@ Queries use accessible roles and names (`getByRole("button", {name: /run review/
 
 ## Layer 3: end-to-end tests (Playwright)
 
-Run from `frontend/` after `npm run build`: `npm run e2e` (6 tests). Playwright starts the real FastAPI server, opens real Chromium, and drives the app: load a sample, run a demo review, filter to critical, open a SQL injection finding, export JSON and check the downloaded file, plus the empty state, the missing-key message, an injected server error, the About page and the keyboard shortcut. No AI provider is involved.
+Run from `frontend/` after `npm run build`: `npm run e2e` (11 tests). Playwright starts the real FastAPI server, opens real Chromium, and drives the app: load a sample, run a demo review, filter to critical, open a SQL injection finding, export JSON and check the downloaded file, plus the empty state, the missing-key message, an injected server error, the About page and the keyboard shortcut. No AI provider is involved. `accessibility.spec.ts` adds axe-core scans (WCAG 2 A/AA rules) of the workspace, live-mode settings, results and About screens, plus a keyboard-only check. Those scans found three real problems during development (low contrast on line numbers, and two accessible names that did not contain their visible text), which were fixed.
 
 ## Static checks
 
@@ -67,7 +68,7 @@ Run from `frontend/` after `npm run build`: `npm run e2e` (6 tests). Playwright 
 ## What the tests do not cover
 
 - Real AI model quality (the AI client is always faked).
-- Visual appearance beyond what I checked in screenshots.
+- Visual appearance beyond what I checked in screenshots; axe cannot judge usability, reading order or screen-reader experience.
 - Docker image build and any hosted deployment.
 - No coverage percentage is claimed; I did not measure one.
 
