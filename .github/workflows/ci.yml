@@ -70,3 +70,21 @@ jobs:
       - name: Run Playwright
         working-directory: frontend
         run: npm run e2e
+
+  docker:
+    name: Docker image (build + demo-only check)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t code-review-demo .
+      - name: Start container with a fake server key and verify live AI stays off
+        run: |
+          docker run -d --name demo -p 8000:10000 -e PORT=10000 -e LLM_API_KEY=sk-fake-not-a-real-key-123456 code-review-demo
+          for i in $(seq 1 30); do curl -fs localhost:8000/api/health && break; sleep 1; done
+          curl -fs localhost:8000/api/config | grep '"live_review_enabled":false'
+          code=$(curl -s -o /dev/null -w "%{http_code}" -X POST localhost:8000/api/review \
+            -H 'Content-Type: application/json' -H 'X-Api-Key: sk-user-key-abcdef123456' \
+            -d '{"code":"x = 1","mode":"live"}')
+          test "$code" = "403"
+          curl -fs localhost:8000/ | grep -q '<div id="root">'
+          docker logs demo
