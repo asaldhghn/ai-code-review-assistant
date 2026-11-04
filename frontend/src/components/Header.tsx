@@ -18,7 +18,7 @@ export function Header({ page, mode }: Props) {
   return (
     <header className="border-b border-line bg-surface/80 backdrop-blur">
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
-        <a href="#/" className="flex items-center gap-2.5 rounded-md" aria-label="AI Code Review Assistant, home">
+        <a href="#/" className="flex items-center gap-2.5 rounded-md">
           <span className="grid size-8 place-items-center rounded-md border border-line-strong bg-raised text-accent">
             <CodeXml aria-hidden="true" className="size-[18px]" />
           </span>

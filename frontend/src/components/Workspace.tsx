@@ -84,7 +84,6 @@ export function Workspace({ session, config, samples, hasResult }: Props) {
               onClick={session.clear}
               disabled={!session.code}
               className={secondaryButton}
-              aria-label="Clear the editor"
             >
               <X aria-hidden="true" className="size-4" /> Clear
             </button>
