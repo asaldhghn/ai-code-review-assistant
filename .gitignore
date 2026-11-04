@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+*.tsbuildinfo
+
+# Secrets and local config (never commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Generated review reports (they may contain source code)
+review-*.html
+review-*.json
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

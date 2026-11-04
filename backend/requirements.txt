@@ -1,0 +1,6 @@
+# Runtime dependencies. For development tools use: pip install -r requirements-dev.txt
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.5,<3
+openai>=2.0,<3
+python-dotenv>=1.0,<2
