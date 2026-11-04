@@ -1,5 +1,5 @@
 import { ArrowLeft, CircleCheck, Download, FileJson, Info, TriangleAlert } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ApiError, fetchReport } from "../../api";
 import { filterFindings, hasActiveFilters, LANGUAGE_LABEL, NO_FILTERS, type FindingFilters } from "../../lib/findings";
 import { downloadBlob, formatCount, formatTime } from "../../lib/format";
@@ -25,6 +25,15 @@ export function ResultsView({ result, onEdit }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [exporting, setExporting] = useState<ReportFormat | null>(null);
   const [exportError, setExportError] = useState<ApiError | null>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  // On narrow screens the detail panel sits below the list, so bring it into view after a pick.
+  function selectFromList(id: string) {
+    setSelectedId(id);
+    if (window.matchMedia?.("(max-width: 1023px)").matches) {
+      detailRef.current?.scrollIntoView?.({ block: "start" });
+    }
+  }
 
   const visible = filterFindings(review.findings, filters);
   // Derived selection: keep the user's pick while it is visible, otherwise fall back to the first.
@@ -123,11 +132,11 @@ export function ResultsView({ result, onEdit }: Props) {
                 )}
               </div>
             ) : (
-              <FindingList findings={visible} selectedId={activeId} onSelect={setSelectedId} />
+              <FindingList findings={visible} selectedId={activeId} onSelect={selectFromList} />
             )}
           </section>
 
-          <div className="min-w-0 space-y-5">
+          <div ref={detailRef} className="min-w-0 scroll-mt-4 space-y-5">
             {active ? (
               <FindingDetail key={active.id} finding={active} />
             ) : (
