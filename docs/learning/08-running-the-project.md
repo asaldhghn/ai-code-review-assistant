@@ -5,7 +5,7 @@ Requirements: **Python 3.12+**, **Node.js 20+**, **Git**. Optional: [ripgrep](ht
 ## 1. Get the code
 
 ```bash
-git clone <your repository URL>
+git clone https://github.com/asaldhghn/ai-code-review-assistant.git
 cd ai-code-review-assistant
 ```
 
